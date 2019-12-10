@@ -46,25 +46,17 @@ namespace AudioDownloader
                     if (isValidUrl)
                     {
                         var fileName = uriResult.Segments.Last();
-
-                        try
+                        var fileExtension = Path.GetExtension(fileName);
+                        if (audioTypes.Contains(fileExtension))
                         {
-                            var fileExtension = fileName.Substring(fileName.IndexOf("."));
-                            if (audioTypes.Contains(fileExtension))
+                            audioFiles.Add(new FileLink()
                             {
-                                audioFiles.Add(new FileLink()
-                                {
-                                    Name = fileName,
-                                    Url = jsonValue
-                                });
+                                Name = fileName,
+                                Url = jsonValue
+                            });
 
-                                Console.WriteLine(jsonValue);
-                            }
+                            Console.WriteLine(jsonValue);
                         }
-                        catch (ArgumentOutOfRangeException)
-                        {
-                            continue;
-                        }                                                                   
                     }
                 }          
             }
@@ -75,15 +67,15 @@ namespace AudioDownloader
             {
                 try
                 {
+                    Console.Write($"Downloading file \'{audioFile.Name}\' from \'{audioFile.Url}\'");
                     client.DownloadFile(audioFile.Url, audioFile.Name);
                 }
                 catch (WebException)
                 {
-                    Console.WriteLine($"Could not download file \'{audioFile.Name}\' from \'{audioFile.Url}\'");
+                    Console.WriteLine($"\nCould not download file \'{audioFile.Name}\' from \'{audioFile.Url}\'");
                     continue;
                 }
-
-                Console.WriteLine($"Downloaded file \'{audioFile.Name}\' from \'{audioFile.Url}\'");
+                Console.Write(" - Finished\n");
             }
 
             Console.WriteLine("\nAll operations are finished. \nPress any key to exit.");
